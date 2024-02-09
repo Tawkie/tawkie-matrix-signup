@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@fastify/autoload": "^5.0.0",
+    "@fastify/postgres": "^5.2.2",
     "@fastify/sensible": "^5.0.0",
     "abort-controller": "^3.0.0",
     "abstract-logging": "^2.0.1",
@@ -95,6 +96,7 @@
     "p-locate": "^3.0.0",
     "p-try": "^2.2.0",
     "path-exists": "^3.0.0",
+    "pg": "^8.11.3",
     "picomatch": "^2.3.1",
     "pino": "^8.18.0",
     "pino-abstract-transport": "^1.1.0",

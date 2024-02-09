@@ -16,6 +16,12 @@ For production mode
 
 ### `npm run test`
 
+You can start a local postgres instance with the command below. Note that the storage is ephemeral.
+
+```
+docker run --rm -it -p 5432:5432 --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+```
+
 Run the test cases.
 
 ## Learn More

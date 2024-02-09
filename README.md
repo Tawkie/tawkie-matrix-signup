@@ -3,6 +3,8 @@ This project was bootstrapped with Fastify-CLI.
 
 ## Available Scripts
 
+The database URI is set with the `TAWKIE_SIGNUP_POSTGRES_URI` environment variable.
+
 In the project directory, you can run:
 
 ### `npm run dev`

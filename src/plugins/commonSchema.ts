@@ -8,7 +8,7 @@ async function commonSchemaPlugin(fastify: FastifyInstance) {
     description: 'A UUID version 4 string',
     type: 'string',
     pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89ABab][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
-    example: 'df27bea8-8596-45a8-ab28-17a7332fd03a',
+    examples: ['df27bea8-8596-45a8-ab28-17a7332fd03a'],
   })
 }
 

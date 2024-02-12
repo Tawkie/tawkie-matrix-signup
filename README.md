@@ -28,4 +28,6 @@ Run the test cases.
 
 ## Learn More
 
+If you run into weird problems, try `rm -rf dist/` before loosing your sanity.
+
 To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).

@@ -9,6 +9,7 @@ type RequestBody = {
 export const updateUsernameSchema = {
   body: {
     type: 'object',
+    required: ['userId', 'username'],
     properties: {
       userId: { '$ref': 'https://tawkie.fr/common/uuid' },
       username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },

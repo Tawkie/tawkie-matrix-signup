@@ -8,7 +8,7 @@ test('matrix-queue/queueStatus requires body', async (t) => {
 
   const res = await app.inject({
     url: '/matrix-queue/queueStatus',
-    method: 'POST',
+    method: 'GET',
   })
 
   assert.equal(res.statusCode, 400)
@@ -19,8 +19,8 @@ test('matrix-queue/queueStatus requires valid uuid', async (t) => {
 
   const res = await app.inject({
     url: '/matrix-queue/queueStatus',
-    method: 'POST',
-    body: {
+    method: 'GET',
+    query: {
       userId: 'foo-bar-3000'
     }
   })
@@ -33,8 +33,8 @@ test('matrix-queue/queueStatus adds to queue a valid uuid', async (t) => {
 
   const res = await app.inject({
     url: '/matrix-queue/queueStatus',
-    method: 'POST',
-    body: {
+    method: 'GET',
+    query: {
       userId: 'df27bea8-8596-45a8-ab28-17a7332fd03a'
     }
   })
@@ -51,8 +51,8 @@ test('matrix-queue/queueStatus adding same uuid to queue returns same position',
 
   const request = {
     url: '/matrix-queue/queueStatus',
-    method: 'POST',
-    body: {
+    method: 'GET',
+    query: {
       userId: 'df27bea8-8596-45a8-ab28-17a7332fd032'
     }
   }
@@ -61,7 +61,7 @@ test('matrix-queue/queueStatus adding same uuid to queue returns same position',
   const res = await app.inject(request)
   assert.equal(res.statusCode, 200)
   const body = JSON.parse(res.body)
-  assert.equal(body.userId, request.body.userId)
+  assert.equal(body.userId, request.query.userId)
   assert.equal(typeof body.queuePosition, 'number')
   assert.ok(body.queuePosition >= 0)
 
@@ -69,7 +69,7 @@ test('matrix-queue/queueStatus adding same uuid to queue returns same position',
   const res1 = await app.inject(request)
   assert.equal(res1.statusCode, 200)
   const body1 = JSON.parse(res1.body)
-  assert.equal(body1.userId, request.body.userId)
+  assert.equal(body1.userId, request.query.userId)
   assert.equal(typeof body1.queuePosition, 'number')
   assert.ok(body1.queuePosition == body.queuePosition)
 })

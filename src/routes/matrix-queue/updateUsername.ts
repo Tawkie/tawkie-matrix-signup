@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
+import { ensureInQueue } from "./queueStatus.js"
 
 type RequestBody = {
   userId: string
@@ -30,28 +31,23 @@ export const updateUsernameSchema = {
 const example: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.put<{ Body: RequestBody }>('/updateUsername', { schema: updateUsernameSchema }, async function(request) {
     const userId = request.body.userId
-    // const username = request.body.username
-    const { rows } = await ensureInQueue(fastify, userId)
+    const username = request.body.username
 
-    // TODO
-
-    // There should be exactly one row.
-    // See /src/plugins/postgres.ts for the table spec
+    const queuePosition = await ensureInQueue(fastify, userId)
+    await updateUsername(fastify, userId, username)
 
     return {
       userId,
-      queuePosition: rows[0].queue_position
+      queuePosition,
+      username,
     }
   })
 }
 
-async function ensureInQueue(fastify: FastifyInstance, userId: string) {
-  // query should insert the user in the queue if not already in it
-  // and return the position in the queue to avoid a race condition
-  const query = `SELECT insert_user_in_queue_if_not_exists($1) AS queue_position;`
-  // See /src/plugins/postgres.ts for the function spec
-
-  return fastify.pg.query<{ position: number }>(query, [userId])
+async function updateUsername(fastify: FastifyInstance, userId: string, username: string) {
+  const query = `UPDATE user_queue SET username = $1 WHERE user_uuid = $2;`
+  await fastify.pg.query(query, [username, userId])
 }
+
 
 export default example;

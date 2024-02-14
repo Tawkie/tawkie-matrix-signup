@@ -41,15 +41,15 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
   })
 }
 
-async function ensureInQueue(fastify: FastifyInstance, userId: string) {
+export async function ensureInQueue(fastify: FastifyInstance, userId: string) {
   // query should insert the user in the queue if not already in it
   // and return the position in the queue to avoid a race condition
   const query = `SELECT insert_user_in_queue_if_not_exists($1) AS queue_position;`
   // See /src/plugins/postgres.ts for the function spec
 
-  const { rows } = await fastify.pg.query<{ position: number }>(query, [userId])
   // There should be exactly one row.
   // See /src/plugins/postgres.ts for the table spec
+  const { rows } = await fastify.pg.query<{ position: number }>(query, [userId])
 
   return rows.length == 1 ? rows[0].queue_position : -1
 }

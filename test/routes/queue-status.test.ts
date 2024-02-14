@@ -3,22 +3,22 @@ import * as assert from 'node:assert'
 import { build } from '../helper.js'
 
 
-test('matrix-queue/joinQueue requires body', async (t) => {
+test('matrix-queue/queueStatus requires body', async (t) => {
   const app = await build(t)
 
   const res = await app.inject({
-    url: '/matrix-queue/joinQueue',
+    url: '/matrix-queue/queueStatus',
     method: 'POST',
   })
 
   assert.equal(res.statusCode, 400)
 })
 
-test('matrix-queue/joinQueue requires valid uuid', async (t) => {
+test('matrix-queue/queueStatus requires valid uuid', async (t) => {
   const app = await build(t)
 
   const res = await app.inject({
-    url: '/matrix-queue/joinQueue',
+    url: '/matrix-queue/queueStatus',
     method: 'POST',
     body: {
       userId: 'foo-bar-3000'
@@ -28,11 +28,11 @@ test('matrix-queue/joinQueue requires valid uuid', async (t) => {
   assert.equal(res.statusCode, 400)
 })
 
-test('matrix-queue/joinQueue adds to queue a valid uuid', async (t) => {
+test('matrix-queue/queueStatus adds to queue a valid uuid', async (t) => {
   const app = await build(t)
 
   const res = await app.inject({
-    url: '/matrix-queue/joinQueue',
+    url: '/matrix-queue/queueStatus',
     method: 'POST',
     body: {
       userId: 'df27bea8-8596-45a8-ab28-17a7332fd03a'
@@ -46,11 +46,11 @@ test('matrix-queue/joinQueue adds to queue a valid uuid', async (t) => {
   assert.ok(body.queuePosition >= 0)
 })
 
-test('matrix-queue/joinQueue adding same uuid to queue returns same position', async (t) => {
+test('matrix-queue/queueStatus adding same uuid to queue returns same position', async (t) => {
   const app = await build(t)
 
   const request = {
-    url: '/matrix-queue/joinQueue',
+    url: '/matrix-queue/queueStatus',
     method: 'POST',
     body: {
       userId: 'df27bea8-8596-45a8-ab28-17a7332fd032'

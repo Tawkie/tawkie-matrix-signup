@@ -5,7 +5,7 @@ type RequestBody = {
   userId: string
 }
 
-export const joinQueueSchema = {
+export const queueStatusSchema = {
   body: {
     type: 'object',
     properties: {
@@ -17,6 +17,7 @@ export const joinQueueSchema = {
       type: 'object',
       properties: {
         userId: { '$ref': 'https://tawkie.fr/common/uuid' },
+        username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },
         queuePosition: { type: 'integer' },
       }
     },
@@ -26,7 +27,7 @@ export const joinQueueSchema = {
 }
 
 const example: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.post<{ Body: RequestBody }>('/joinQueue', { schema: joinQueueSchema }, async function(request) {
+  fastify.post<{ Body: RequestBody }>('/queueStatus', { schema: queueStatusSchema }, async function(request) {
     const userId = request.body.userId
     const { rows } = await ensureInQueue(fastify, userId)
 

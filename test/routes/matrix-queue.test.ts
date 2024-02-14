@@ -2,15 +2,74 @@ import { test } from 'node:test'
 import * as assert from 'node:assert'
 import { build } from '../helper.js'
 
-test('matrix-queue/joinQueue is loaded', async (t) => {
-  console.log('matrix-queue/joinQueue is loading')
+
+test('matrix-queue/joinQueue requires body', async (t) => {
   const app = await build(t)
-  console.log('matrix-queue/joinQueue is loaded')
 
   const res = await app.inject({
-    url: '/matrix-queue/joinQueue'
+    url: '/matrix-queue/joinQueue',
+    method: 'POST',
   })
-  console.log('matrix-queue/joinQueue is injected')
 
-  assert.equal(res.payload, 'this is an example')
+  assert.equal(res.statusCode, 400)
+})
+
+test('matrix-queue/joinQueue requires valid uuid', async (t) => {
+  const app = await build(t)
+
+  const res = await app.inject({
+    url: '/matrix-queue/joinQueue',
+    method: 'POST',
+    body: {
+      userId: 'foo-bar-3000'
+    }
+  })
+
+  assert.equal(res.statusCode, 400)
+})
+
+test('matrix-queue/joinQueue adds to queue a valid uuid', async (t) => {
+  const app = await build(t)
+
+  const res = await app.inject({
+    url: '/matrix-queue/joinQueue',
+    method: 'POST',
+    body: {
+      userId: 'df27bea8-8596-45a8-ab28-17a7332fd03a'
+    }
+  })
+  const body = JSON.parse(res.body)
+
+  assert.equal(res.statusCode, 200)
+  assert.equal(body.userId, 'df27bea8-8596-45a8-ab28-17a7332fd03a')
+  assert.equal(typeof body.queuePosition, 'number')
+  assert.ok(body.queuePosition >= 0)
+})
+
+test('matrix-queue/joinQueue adding same uuid to queue returns same position', async (t) => {
+  const app = await build(t)
+
+  const request = {
+    url: '/matrix-queue/joinQueue',
+    method: 'POST',
+    body: {
+      userId: 'df27bea8-8596-45a8-ab28-17a7332fd032'
+    }
+  }
+
+  // First request
+  const res = await app.inject(request)
+  assert.equal(res.statusCode, 200)
+  const body = JSON.parse(res.body)
+  assert.equal(body.userId, request.body.userId)
+  assert.equal(typeof body.queuePosition, 'number')
+  assert.ok(body.queuePosition >= 0)
+
+  // Second request
+  const res1 = await app.inject(request)
+  assert.equal(res1.statusCode, 200)
+  const body1 = JSON.parse(res1.body)
+  assert.equal(body1.userId, request.body.userId)
+  assert.equal(typeof body1.queuePosition, 'number')
+  assert.ok(body1.queuePosition == body.queuePosition)
 })

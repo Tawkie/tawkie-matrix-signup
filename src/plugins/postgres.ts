@@ -1,6 +1,20 @@
 import fastifyPlugin from 'fastify-plugin';
 import type { FastifyInstance } from 'fastify';
 
+export enum UserQueueState {
+    NONE = 0,
+    IN_QUEUE = 1,
+    ACCEPTED = 2,
+    CREATED = 3,
+}
+
+export const UserQueueStateStrings = {
+    [UserQueueState.NONE]: 'NONE',
+    [UserQueueState.IN_QUEUE]: 'IN_QUEUE',
+    [UserQueueState.ACCEPTED]: 'ACCEPTED',
+    [UserQueueState.CREATED]: 'CREATED',
+}
+
 async function postgresPlugin(fastify: FastifyInstance) {
   const uri = process.env.TAWKIE_SIGNUP_POSTGRES_URI ?? 'postgres://postgres:mysecretpassword@localhost/postgres';
   fastify.register(import('@fastify/postgres'), {
@@ -15,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.user_queue (
     queue_position SERIAL PRIMARY KEY,
     user_uuid UUID UNIQUE NOT NULL,
     username VARCHAR(255),
-    accepted BOOLEAN NOT NULL DEFAULT FALSE
+    state INT NOT NULL DEFAULT ${UserQueueState.IN_QUEUE},
 );
 CREATE INDEX IF NOT EXISTS idx_user_queue_user_uuid ON public.user_queue(user_uuid);
 `

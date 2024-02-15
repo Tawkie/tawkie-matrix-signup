@@ -50,7 +50,7 @@ test('matrix-queue/updateUsername updates username', async (t) => {
   const res = await app.inject({
     url: '/matrix-queue/updateUsername',
     method: 'PUT',
-    query: {
+    body: {
       userId: 'df27bea8-8596-45a8-ab28-17a7332fd03a',
       username: 'foobar3000',
     }

@@ -1,5 +1,6 @@
 import fastifyPlugin from 'fastify-plugin';
 import type { FastifyInstance } from 'fastify';
+import { UserQueueState, UserQueueStateStrings } from './postgres.js';
 
 async function commonSchemaPlugin(fastify: FastifyInstance) {
   fastify.addSchema({
@@ -17,6 +18,14 @@ async function commonSchemaPlugin(fastify: FastifyInstance) {
     type: 'string',
     pattern: '^[a-z0-9]{3,16}$',
     examples: ['bobby'],
+  })
+  fastify.addSchema({
+    $id: 'https://tawkie.fr/common/userQueueState',
+    title: 'User queue state',
+    description: 'The state of a user in the queue',
+    type: 'string',
+    enum: Object.values(UserQueueStateStrings),
+    examples: [UserQueueState.IN_QUEUE],
   })
 }
 

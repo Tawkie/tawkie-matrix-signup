@@ -1,8 +1,16 @@
 import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
+import { UserQueueState, UserQueueStateStrings } from "./../../plugins/postgres.js"
 
 type RequestQuery = {
   userId: string
+}
+
+type UserQueue = {
+  userId: string
+  username: string
+  queuePosition: number
+  userState: string
 }
 
 export const queueStatusSchema = {
@@ -20,6 +28,7 @@ export const queueStatusSchema = {
         userId: { '$ref': 'https://tawkie.fr/common/uuid' },
         username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },
         queuePosition: { type: 'integer' },
+        userState: { '$ref': 'https://tawkie.fr/common/userQueueState' },
       }
     },
     400: { $ref: 'https://tawkie.fr/common/HttpError' },
@@ -27,17 +36,12 @@ export const queueStatusSchema = {
   }
 }
 
-const example: FastifyPluginAsync = async (fastify): Promise<void> => {
+const queueStatus: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.get<{ Querystring: RequestQuery }>('/queueStatus', { schema: queueStatusSchema }, async function(request) {
     const userId = request.query.userId
-    const queuePosition = await ensureInQueue(fastify, userId)
-    const username = await getUsername(fastify, userId)
 
-    return {
-      userId,
-      queuePosition,
-      username,
-    }
+    await ensureInQueue(fastify, userId)
+    return await getUserFromQueue(fastify, userId)
   })
 }
 
@@ -54,10 +58,32 @@ export async function ensureInQueue(fastify: FastifyInstance, userId: string) {
   return rows.length == 1 ? rows[0].queue_position : -1
 }
 
-async function getUsername(fastify: FastifyInstance, userId: string) {
-  const query = `SELECT username FROM user_queue WHERE user_uuid = $1;`
-  const { rows } = await fastify.pg.query<{ username: string }>(query, [userId])
-  return rows.length == 1 ? rows[0].username : ""
+type UserQueueDatabaseModel = {
+  username: string
+  user_uuid: string
+  queue_position: number
+  user_state: UserQueueState
 }
 
-export default example;
+export async function getUserFromQueue(fastify: FastifyInstance, userId: string): Promise<UserQueue> {
+  const query = `SELECT username, user_uuid, queue_position, user_state FROM user_queue WHERE user_uuid = $1;`
+  const { rows } = await fastify.pg.query<UserQueueDatabaseModel>(query, [userId])
+
+  if (rows.length !== 1) {
+    fastify.log.error(`getUserFromQueue: found 0 or multiple queue entries for user ${userId}`)
+    return {
+      username: "",
+      queuePosition: -1,
+      userState: UserQueueStateStrings[UserQueueState.NONE],
+      userId: userId,
+    }
+  } else
+    return {
+      username: rows[0].username,
+      queuePosition: rows[0].queue_position,
+      userState: UserQueueStateStrings[rows[0].user_state as UserQueueState],
+      userId: userId,
+    }
+}
+
+export default queueStatus;

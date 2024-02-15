@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
-import { ensureInQueue } from "./queueStatus.js"
+import { ensureInQueue, getUserFromQueue } from "./queueStatus.js"
 
 type RequestBody = {
   userId: string
@@ -22,6 +22,7 @@ export const updateUsernameSchema = {
       properties: {
         userId: { '$ref': 'https://tawkie.fr/common/uuid' },
         username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },
+        userState: { '$ref': 'https://tawkie.fr/common/userQueueState' },
         queuePosition: { type: 'integer' },
       }
     },
@@ -35,14 +36,12 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     const userId = request.body.userId
     const username = request.body.username
 
-    const queuePosition = await ensureInQueue(fastify, userId)
+    await ensureInQueue(fastify, userId)
     await updateUsername(fastify, userId, username)
 
-    return {
-      userId,
-      queuePosition,
-      username,
-    }
+    const user = await getUserFromQueue(fastify, userId)
+
+    return user
   })
 }
 

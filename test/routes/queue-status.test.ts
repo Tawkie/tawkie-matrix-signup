@@ -44,6 +44,7 @@ test('matrix-queue/queueStatus adds to queue a valid uuid', async (t) => {
   assert.equal(body.userId, 'df27bea8-8596-45a8-ab28-17a7332fd03a')
   assert.equal(typeof body.queuePosition, 'number')
   assert.ok(body.queuePosition >= 0)
+  assert.equal(body.userState, 'IN_QUEUE')
 })
 
 test('matrix-queue/queueStatus adding same uuid to queue returns same position', async (t) => {
@@ -64,6 +65,7 @@ test('matrix-queue/queueStatus adding same uuid to queue returns same position',
   assert.equal(body.userId, request.query.userId)
   assert.equal(typeof body.queuePosition, 'number')
   assert.ok(body.queuePosition >= 0)
+  assert.equal(body.userState, 'IN_QUEUE')
 
   // Second request
   const res1 = await app.inject(request)
@@ -72,4 +74,5 @@ test('matrix-queue/queueStatus adding same uuid to queue returns same position',
   assert.equal(body1.userId, request.query.userId)
   assert.equal(typeof body1.queuePosition, 'number')
   assert.ok(body1.queuePosition == body.queuePosition)
+  assert.equal(body.userState, 'IN_QUEUE')
 })

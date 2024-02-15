@@ -62,6 +62,7 @@ test('matrix-queue/updateUsername updates username', async (t) => {
   assert.equal(typeof body.queuePosition, 'number')
   assert.ok(body.queuePosition >= 0)
   assert.equal(body.username, 'foobar3000')
+  assert.equal(body.userState, 'IN_QUEUE')
 
   const res1 = await app.inject({
     url: '/matrix-queue/queueStatus',
@@ -77,4 +78,5 @@ test('matrix-queue/updateUsername updates username', async (t) => {
   assert.equal(typeof body1.queuePosition, 'number')
   assert.ok(body1.queuePosition === body.queuePosition)
   assert.equal(body1.username, 'foobar3000')
+  assert.equal(body.userState, 'IN_QUEUE')
 })

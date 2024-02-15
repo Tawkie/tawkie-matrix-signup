@@ -3,17 +3,19 @@ import type { FastifyInstance } from 'fastify';
 
 export enum UserQueueState {
     NONE = 0,
-    IN_QUEUE = 1,
-    ACCEPTED = 2,
-    CREATED = 3,
+    BLOCKED = 1,
+    IN_QUEUE = 2,
+    ACCEPTED = 3,
+    CREATED = 4,
 }
 
-export const UserQueueStateStrings = {
+export const UserQueueStateStrings: { [key in UserQueueState]: string } = {
     [UserQueueState.NONE]: 'NONE',
+    [UserQueueState.BLOCKED]: 'BLOCKED',
     [UserQueueState.IN_QUEUE]: 'IN_QUEUE',
     [UserQueueState.ACCEPTED]: 'ACCEPTED',
     [UserQueueState.CREATED]: 'CREATED',
-}
+};
 
 async function postgresPlugin(fastify: FastifyInstance) {
     const uri = process.env.TAWKIE_SIGNUP_POSTGRES_URI ?? 'postgres://postgres:mysecretpassword@localhost/postgres';

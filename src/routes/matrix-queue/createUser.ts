@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
 import { getUserFromQueue } from "./queueStatus.js"
-import { UserQueueState } from "../../plugins/postgres.js"
+import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
 
 type RequestBody = {
   userId: string
@@ -35,6 +35,22 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     const userId = request.body.userId
 
     const user = await getUserFromQueue(fastify, userId)
+
+    if (user.queuePosition == -1) {
+      throw fastify.httpErrors.badRequest('User is not in the queue')
+    }
+
+    if (!user.username) {
+      throw fastify.httpErrors.badRequest('User does not have a username')
+    }
+
+    if (user.userState === UserQueueStateStrings[UserQueueState.CREATED]) {
+      throw fastify.httpErrors.badRequest('User is already created')
+    }
+
+    if (user.userState !== UserQueueStateStrings[UserQueueState.ACCEPTED]) {
+      throw fastify.httpErrors.badRequest('User is not in the accepted state')
+    }
 
     // TODO actually create the user
     await markUserAsCreated(fastify, userId)

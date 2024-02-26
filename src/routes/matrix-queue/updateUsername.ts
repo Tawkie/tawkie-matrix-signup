@@ -45,6 +45,7 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
       throw fastify.httpErrors.badRequest('User is not in the queue')
     }
     await updateUsername(fastify, userId, username)
+    user.username = username
 
     return user
   })

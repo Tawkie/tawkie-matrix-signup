@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
 import { ensureInQueue, getUserFromQueue } from "./queueStatus.js"
+import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
 
 type RequestBody = {
   userId: string
@@ -37,9 +38,13 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     const username = request.body.username
 
     await ensureInQueue(fastify, userId)
-    await updateUsername(fastify, userId, username)
 
     const user = await getUserFromQueue(fastify, userId)
+    if (user.userState !== UserQueueStateStrings[UserQueueState.IN_QUEUE]) {
+      fastify.log.warn(`Illegal : User ${userId} tried to update its username while not in the queue. State: ${user.userState}`)
+      throw fastify.httpErrors.badRequest('User is not in the queue')
+    }
+    await updateUsername(fastify, userId, username)
 
     return user
   })

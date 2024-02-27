@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
 import { getUserFromQueue } from "./queueStatus.js"
 import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
+import { createUser } from "../../matrix/matrix.js"
 
 type RequestBody = {
   userId: string
@@ -52,10 +53,22 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
       throw fastify.httpErrors.badRequest('User is not in the accepted state')
     }
 
-    // TODO actually create the user
-    await markUserAsCreated(fastify, userId)
-    // TODO How to deal with the state if the Matrix user is succesfully created but the markUserAsCreated fails?
-    // TODO write tests
+    const userMatrixId = user.username
+    const status = await createUser(userMatrixId) // TODO server
+    if (status === 200) {
+      fastify.log.warn('createUser: Tried to create user ' + userId + ' but it already exists')
+    } else if (status === 201) {
+      fastify.log.info('createUser: Created user ' + userId)
+    }
+    // let fastify handle non 200/201 status codes
+
+    try {
+      await markUserAsCreated(fastify, userId)
+      user.userState = UserQueueStateStrings[UserQueueState.CREATED]
+    } catch (error) {
+      fastify.log.error('createUser: Failed to mark user ' + userId + ' as created: ' + error)
+      // If markUserAsCreated fails, createUser will 200 next time `/createUser` is called
+    }
     return user
   })
 }

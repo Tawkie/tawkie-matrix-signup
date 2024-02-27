@@ -92,5 +92,19 @@ test('matrix-queue/createUser creates account', async (t) => {
   assert.ok(body1.queuePosition === body.queuePosition)
   assert.equal(body1.username, 'foobar3000')
   assert.equal(body.userState, 'IN_QUEUE')
-  // TODO asserted matrix created
+
+  const res2 = await app.inject({
+    url: '/matrix-queue/createUser',
+    method: 'PUT',
+    body: {
+      userId: 'df27bea8-8596-45a8-ab28-17a7332fd03a',
+    }
+  })
+  const body2 = JSON.parse(res2.body)
+
+  assert.equal(res2.statusCode, 200)
+  assert.equal(body2.userId, 'df27bea8-8596-45a8-ab28-17a7332fd03a')
+  assert.equal(typeof body2.queuePosition, 'number')
+  assert.equal(body2.username, 'foobar3000')
+  assert.equal(body2.userState, 'CREATED')
 })

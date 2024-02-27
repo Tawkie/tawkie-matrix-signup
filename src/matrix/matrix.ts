@@ -13,3 +13,22 @@ export const getServerVersion = async (): Promise<string> => {
   // let function caller handle the error
   return response.data.server_version;
 }
+
+/**
+ * Create a user on the Matrix server
+ * @param userId A fully-qualified user id. For example, `@user:server.com`.
+ * @returns The HTTP status code of the response.
+ * @throws An error if the user could not be created.
+ * @see https://matrix-org.github.io/synapse/latest/admin_api/user_admin_api.html
+ */
+export const createUser = async (userId: string): Promise<number> => {
+  const response = await axios.put(baseUrl + 'admin/v2/users/' + userId, {
+    admin: false,
+  }, {
+    headers: {
+      'Authorization': 'Bearer ' + accessToken
+    }
+  })
+  // let function caller handle the error
+  return response.status;
+}

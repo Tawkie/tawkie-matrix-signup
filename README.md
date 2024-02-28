@@ -3,7 +3,12 @@ This project was bootstrapped with Fastify-CLI.
 
 ## Available Scripts
 
-The database URI is set with the `TAWKIE_SIGNUP_POSTGRES_URI` environment variable.
+Environment variables :
+- `MATRIX_ADMIN_BASE_URL` : Base url to call the Matrix API. default : `http://127.0.0.1:8008/_synapse/`
+- `MATRIX_ADMIN_ACCESS_TOKEN` : Admin access token, see [docs][synapse-making-admin-api-request].
+  default : `syt_foobar`
+- `TAWKIE_SIGNUP_POSTGRES_URI` : Postgres database uri. See test section below on how to start a local postgres db.
+  default : `postgres://postgres:mysecretpassword@localhost/postgres`
 
 In the project directory, you can run:
 

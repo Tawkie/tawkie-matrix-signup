@@ -33,6 +33,31 @@ A postgres database is required for the service to function. Start a local postg
 docker run --rm -it -p 5432:5432 --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
 ```
 
+## Building and running docker image
+
+Build :
+
+```
+npm run build:prod
+docker build -t tawkie-matrix-signup .
+```
+
+Create docker network and connect local postgres database :
+
+```
+docker network create --driver=bridge tawkie
+docker network connect tawkie some-postgres
+```
+
+Run :
+
+```
+docker run -it --rm \
+  -e TAWKIE_SIGNUP_POSTGRES_URI=postgres://postgres:mysecretpassword@some-postgres/postgres \
+  -p 3000:3000 \
+  --network=tawkie \
+  tawkie-matrix-signup
+```
 
 ## Learn More
 

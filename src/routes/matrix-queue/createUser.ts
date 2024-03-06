@@ -9,6 +9,7 @@ type RequestBody = {
 }
 
 export const updateUsernameSchema = {
+  operationId: 'updateUsername',
   body: {
     type: 'object',
     required: ['userId'],

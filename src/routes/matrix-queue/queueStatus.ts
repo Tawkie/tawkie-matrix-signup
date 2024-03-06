@@ -14,6 +14,7 @@ type UserQueue = {
 }
 
 export const queueStatusSchema = {
+  operationId: 'getQueueStatus',
   query: {
     type: 'object',
     required: ['userId'],

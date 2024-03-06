@@ -11,6 +11,7 @@ type UserQueue = {
   username: string
   queuePosition: number
   userState: string
+  serverName?: string
 }
 
 export const queueStatusSchema = {
@@ -30,6 +31,7 @@ export const queueStatusSchema = {
         username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },
         queuePosition: { type: 'integer' },
         userState: { '$ref': 'https://tawkie.fr/common/userQueueState' },
+        serverName: { type: 'string' },
       }
     },
     400: { $ref: 'https://tawkie.fr/common/HttpError' },
@@ -64,10 +66,11 @@ type UserQueueDatabaseModel = {
   user_uuid: string
   queue_position: number
   user_state: UserQueueState
+  matrix_instance: string
 }
 
 export async function getUserFromQueue(fastify: FastifyInstance, userId: string): Promise<UserQueue> {
-  const query = `SELECT username, user_uuid, queue_position, user_state FROM user_queue WHERE user_uuid = $1;`
+  const query = `SELECT username, user_uuid, queue_position, user_state, matrix_instance FROM user_queue WHERE user_uuid = $1;`
   const { rows } = await fastify.pg.query<UserQueueDatabaseModel>(query, [userId])
 
   if (rows.length !== 1) {
@@ -77,6 +80,7 @@ export async function getUserFromQueue(fastify: FastifyInstance, userId: string)
       queuePosition: -1,
       userState: UserQueueStateStrings[UserQueueState.NONE],
       userId: userId,
+      serverName: "",
     }
   } else
     return {
@@ -84,6 +88,7 @@ export async function getUserFromQueue(fastify: FastifyInstance, userId: string)
       queuePosition: rows[0].queue_position,
       userState: UserQueueStateStrings[rows[0].user_state as UserQueueState],
       userId: userId,
+      serverName: rows[0].matrix_instance,
     }
 }
 

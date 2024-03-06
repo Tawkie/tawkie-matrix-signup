@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS public.user_queue (
     queue_position SERIAL PRIMARY KEY,
     user_uuid UUID UNIQUE NOT NULL,
     username VARCHAR(20) UNIQUE NULL,
-    user_state INT NOT NULL DEFAULT ${UserQueueState.IN_QUEUE}
+    user_state INT NOT NULL DEFAULT ${UserQueueState.IN_QUEUE},
+    matrix_instance VARCHAR(255) NULL
 );
 CREATE INDEX IF NOT EXISTS idx_user_queue_user_uuid ON public.user_queue(user_uuid);
 `

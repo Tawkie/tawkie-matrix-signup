@@ -26,6 +26,7 @@ export const updateUsernameSchema = {
         username: { '$ref': 'https://tawkie.fr/common/matrixUsername' },
         userState: { '$ref': 'https://tawkie.fr/common/userQueueState' },
         queuePosition: { type: 'integer' },
+        serverName: { type: 'string' },
       }
     },
     400: { $ref: 'https://tawkie.fr/common/HttpError' },

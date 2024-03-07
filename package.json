@@ -79,6 +79,7 @@
     "joycon": "^3.1.1",
     "json-schema-ref-resolver": "^1.0.1",
     "json-schema-traverse": "^1.0.0",
+    "jsonwebtoken": "^9.0.2",
     "light-my-request": "^5.11.0",
     "locate-path": "^3.0.0",
     "lru-cache": "^6.0.0",
@@ -147,6 +148,7 @@
   },
   "devDependencies": {
     "@fastify/swagger": "^8.14.0",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.4.4",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",

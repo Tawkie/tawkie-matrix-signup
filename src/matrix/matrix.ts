@@ -28,9 +28,12 @@ export const createUser = async (userId: string, serverName: string): Promise<nu
   if (!matrixServerList.includes(serverName)) {
     throw new Error('Server name is not recognised');
   }
+  if (!userId) {
+    throw new Error('User does not have a username');
+  }
 
   // TODO support multiple servers
-  const response = await axios.put(baseUrl + 'admin/v2/users/' + userId, {
+  const response = await axios.put(baseUrl + 'admin/v2/users/@' + userId, {
     admin: false,
   }, {
     headers: {

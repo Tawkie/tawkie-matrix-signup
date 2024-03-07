@@ -32,8 +32,10 @@ export const createUser = async (userId: string, serverName: string): Promise<nu
     throw new Error('User does not have a username');
   }
 
+  const matrixId = `@${userId}:${serverName}`
+
   // TODO support multiple servers
-  const response = await axios.put(baseUrl + 'admin/v2/users/@' + userId, {
+  const response = await axios.put(baseUrl + 'admin/v2/users/' + matrixId, {
     admin: false,
   }, {
     headers: {

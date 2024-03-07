@@ -34,6 +34,10 @@ export const createUser = async (userId: string, serverName: string): Promise<nu
 
   const matrixId = `@${userId}:${serverName}`
 
+  if (serverName.includes('matrix.')) {
+    serverName = serverName.replace('matrix.', '');
+  }
+
   // TODO support multiple servers
   const response = await axios.put(baseUrl + 'admin/v2/users/' + matrixId, {
     admin: false,

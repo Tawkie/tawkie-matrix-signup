@@ -86,7 +86,7 @@ function getLoginJwt(fastify: FastifyInstance, username: string, serverName: str
     iat: Math.floor(Date.now() / 1000),
     sub: username,
     iss: process.env.JWT_ISSUER || 'staging.tawkie.fr', //TODO add to ansible
-    audiences: [serverName],
+    aud: [serverName],
   }
 
   return jwt.sign(payload, privateKey, { algorithm: 'RS256' })

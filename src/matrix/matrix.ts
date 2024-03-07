@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // handle single Matrix server for now
-const matrixServerName = process.env.MATRIX_SERVER_NAME ?? 'matrix.alpha.tawkie.fr';
+const matrixServerName = process.env.MATRIX_SERVER_NAME ?? 'matrix.staging.tawkie.fr';
 const baseUrl = process.env.MATRIX_ADMIN_BASE_URL ?? 'http://127.0.0.1:8008/_synapse/';
 const accessToken = process.env.MATRIX_ADMIN_ACCESS_TOKEN ?? 'syt_foobar';
 

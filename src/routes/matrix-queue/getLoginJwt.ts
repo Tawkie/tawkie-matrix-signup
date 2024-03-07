@@ -85,7 +85,7 @@ function getLoginJwt(fastify: FastifyInstance, username: string, serverName: str
     exp: Math.floor(Date.now() / 1000) + 60, // jwt expires in 60 seconds
     iat: Math.floor(Date.now() / 1000),
     sub: username,
-    issuer: process.env.JWT_ISSUER || 'staging.tawkie.fr',
+    iss: process.env.JWT_ISSUER || 'staging.tawkie.fr', //TODO add to ansible
     audiences: [serverName],
   }
 

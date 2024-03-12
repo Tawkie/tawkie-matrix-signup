@@ -9,8 +9,8 @@ type RequestBody = {
   serverName: string
 }
 
-export const updateUsernameSchema = {
-  operationId: 'updateUsername',
+export const createUserSchema = {
+  operationId: 'createUser',
   body: {
     type: 'object',
     required: ['userId', 'serverName'],
@@ -36,7 +36,7 @@ export const updateUsernameSchema = {
 }
 
 const example: FastifyPluginAsync = async (fastify): Promise<void> => {
-  fastify.put<{ Body: RequestBody }>('/createUser', { schema: updateUsernameSchema }, async function(request) {
+  fastify.put<{ Body: RequestBody }>('/createUser', { schema: createUserSchema }, async function(request) {
     const userId = request.body.userId
     const serverName = request.body.serverName
 

@@ -60,6 +60,16 @@ docker run -it --rm \
   tawkie-matrix-signup
 ```
 
+## Generating an Open-API spec and Typescript types
+
+Rebuild, generate Open-API spec (you need a running postgres instace, see above), export types.
+
+```
+npm run build:ts
+fastify generate-swagger dist/app.js > api-spec.json
+npx openapicmd typegen ./api-spec.json > openapi-types.d.ts
+```
+
 ## Learn More
 
 If you run into weird problems, try `rm -rf dist/` before loosing your sanity.

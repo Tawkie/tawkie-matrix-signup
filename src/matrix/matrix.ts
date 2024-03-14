@@ -5,7 +5,7 @@ const matrixServerName = process.env.MATRIX_SERVER_NAME ?? 'matrix.staging.tawki
 const baseUrl = process.env.MATRIX_ADMIN_BASE_URL ?? 'http://127.0.0.1:8008/_synapse/';
 const accessToken = process.env.MATRIX_ADMIN_ACCESS_TOKEN ?? 'syt_foobar';
 
-export const matrixServerList = [matrixServerName];
+export const matrixServerList = [matrixServerName, 'matrix.alpha.tawkie.fr', 'matrix.loveto.party'];
 
 export const getServerVersion = async (): Promise<string> => {
   const response = await axios.get(baseUrl + 'admin/v1/server_version', {

@@ -40,6 +40,10 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     const userId = request.body.userId
     const username = request.body.username
 
+    if (username === null || username === undefined || username === '' || username === 'undefined') {
+      throw fastify.httpErrors.badRequest('Username cannot be empty')
+    }
+
     await ensureInQueue(fastify, userId)
 
     const user = await getUserFromQueue(fastify, userId)

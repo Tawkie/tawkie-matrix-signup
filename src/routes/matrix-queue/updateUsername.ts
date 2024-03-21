@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from "fastify"
 import { FastifyInstance } from "fastify"
 import { ensureInQueue, getUserFromQueue } from "./queueStatus.js"
 import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
+import { DatabaseError } from "pg-protocol"
 
 type RequestBody = {
   userId: string
@@ -46,7 +47,15 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
       fastify.log.warn(`Illegal : User ${userId} tried to update its username while not in the queue. State: ${user.userState}`)
       throw fastify.httpErrors.badRequest('User is not in the queue')
     }
-    await updateUsername(fastify, userId, username)
+    try {
+      await updateUsername(fastify, userId, username)
+    } catch (e) {
+      if (e instanceof DatabaseError && e.code && e.code === '23505') {
+        fastify.log.warn(`User ${userId} tried to update its username to ${username} but it is already taken`)
+        throw fastify.httpErrors.badRequest('Username already taken')
+      } else
+        throw e
+    }
     user.username = username
 
     return user

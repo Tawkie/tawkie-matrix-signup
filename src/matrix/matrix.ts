@@ -73,12 +73,19 @@ export const userExists = async (userId: string, serverName = matrixServerName):
 
   const matrixId = `@${userId}:${serverName}`
 
-  // TODO support multiple servers
-  const response = await axios.get(baseUrl + 'admin/v2/users/' + matrixId, {
-    headers: {
-      'Authorization': 'Bearer ' + accessToken
+  try {
+    // TODO support multiple servers
+    const response = await axios.get(baseUrl + 'admin/v2/users/' + matrixId, {
+      headers: {
+        'Authorization': 'Bearer ' + accessToken
+      }
+    })
+    // let function caller handle the error
+    return response.status === 200;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
+      return false;
     }
-  })
-  // let function caller handle the error
-  return response.status === 200;
+    throw error;
+  }
 }

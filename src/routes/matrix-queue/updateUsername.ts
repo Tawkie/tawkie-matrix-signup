@@ -35,6 +35,8 @@ export const updateUsernameSchema = {
   }
 }
 
+const reservedUsernames = ['admin', 'bot']
+
 const example: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.put<{ Body: RequestBody }>('/updateUsername', { schema: updateUsernameSchema }, async function(request) {
     const userId = request.body.userId
@@ -42,6 +44,10 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
 
     if (usernameIsEmpty(username)) {
       throw fastify.httpErrors.badRequest('Username cannot be empty')
+    }
+
+    if (usernameIsReserved(username)) {
+      throw fastify.httpErrors.badRequest('Username is reserved. Must not contain any of the following: ' + reservedUsernames.join(', '))
     }
 
     await ensureInQueue(fastify, userId)
@@ -74,6 +80,20 @@ async function updateUsername(fastify: FastifyInstance, userId: string, username
 function usernameIsEmpty(username: string): boolean {
   return username === null || username === undefined || username === '' || username === 'undefined'
 }
+
+// returns true if the username contains any of the reserved usernames
+function usernameIsReserved(username: string): boolean {
+  if (username.includes('-') || username.includes('_'))
+    return true
+  for (const reservedUsername of reservedUsernames) {
+    if (username.includes(reservedUsername)) {
+      return true
+    }
+  }
+  return false
+}
+
+
 
 
 export default example;

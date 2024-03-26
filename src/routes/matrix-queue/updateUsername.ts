@@ -3,6 +3,7 @@ import { FastifyInstance } from "fastify"
 import { ensureInQueue, getUserFromQueue } from "./queueStatus.js"
 import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
 import { DatabaseError } from "pg-protocol"
+import { userExists } from "../../matrix/matrix.js"
 
 type RequestBody = {
   userId: string
@@ -57,6 +58,13 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
       fastify.log.warn(`Illegal : User ${userId} tried to update its username while not in the queue. State: ${user.userState}`)
       throw fastify.httpErrors.badRequest('User is not in the queue')
     }
+
+    const existsOnMatrix = await userExists(username)
+    if (existsOnMatrix) {
+      fastify.log.warn(`User ${userId} tried to update its username to ${username} but it already exists on the Matrix server`)
+      throw fastify.httpErrors.badRequest('Username already exists on the Matrix server')
+    }
+
     try {
       await updateUsername(fastify, userId, username)
     } catch (e) {

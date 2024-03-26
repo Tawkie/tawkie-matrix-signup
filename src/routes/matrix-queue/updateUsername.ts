@@ -40,7 +40,7 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     const userId = request.body.userId
     const username = request.body.username
 
-    if (username === null || username === undefined || username === '' || username === 'undefined') {
+    if (usernameIsEmpty(username)) {
       throw fastify.httpErrors.badRequest('Username cannot be empty')
     }
 
@@ -69,6 +69,10 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
 async function updateUsername(fastify: FastifyInstance, userId: string, username: string) {
   const query = `UPDATE user_queue SET username = $1 WHERE user_uuid = $2;`
   await fastify.pg.query(query, [username, userId])
+}
+
+function usernameIsEmpty(username: string): boolean {
+  return username === null || username === undefined || username === '' || username === 'undefined'
 }
 
 

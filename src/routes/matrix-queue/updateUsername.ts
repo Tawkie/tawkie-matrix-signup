@@ -4,6 +4,7 @@ import { ensureInQueue, getUserFromQueue } from "./queueStatus.js"
 import { UserQueueState, UserQueueStateStrings } from "../../plugins/postgres.js"
 import { DatabaseError } from "pg-protocol"
 import { userExists } from "../../matrix/matrix.js"
+import { notifyWebhook } from "../../utils/hookshot.js"
 
 type RequestBody = {
   userId: string
@@ -67,6 +68,7 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
 
     try {
       await updateUsername(fastify, userId, username)
+      notifyWebhook(`🎉 User ${userId} updated their username to ${username}`)
     } catch (e) {
       if (e instanceof DatabaseError && e.code && e.code === '23505') {
         fastify.log.warn(`User ${userId} tried to update its username to ${username} but it is already taken`)

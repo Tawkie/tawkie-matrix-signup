@@ -10,6 +10,9 @@ Environment variables :
 - `MATRIX_SERVER_NAME` : Name of the unique matrix server. Used for OIDC. default : `matrix.alpha.tawkie.fr`
 - `TAWKIE_SIGNUP_POSTGRES_URI` : Postgres database uri. See test section below on how to start a local postgres db.
   default : `postgres://postgres:mysecretpassword@localhost/postgres`
+- `EMAIL_API_REGION` : Scaleway API region. Used for Transactional Email. default : `fr-par`
+- `EMAIL_API_PROJECT_ID` : Scaleway API project id. Used for Transactional Email.
+- `EMAIL_API_KEY` : Scaleway API key. Used for Transactional Email.
 
 In the project directory, you can run:
 

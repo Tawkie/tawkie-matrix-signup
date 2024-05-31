@@ -6,7 +6,7 @@ type RequestQuery = {
   userId: string
 }
 
-type UserQueue = {
+export type UserQueue = {
   userId: string
   username: string
   queuePosition: number

@@ -55,7 +55,8 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     await ensureInQueue(fastify, userId)
 
     const user = await getUserFromQueue(fastify, userId)
-    if (user.userState !== UserQueueStateStrings[UserQueueState.IN_QUEUE]) {
+    if (user.userState !== UserQueueStateStrings[UserQueueState.IN_QUEUE]
+      && user.userState !== UserQueueStateStrings[UserQueueState.ACCEPTED]) {
       fastify.log.warn(`Illegal : User ${userId} tried to update its username while not in the queue. State: ${user.userState}`)
       throw fastify.httpErrors.badRequest('User is not in the queue')
     }

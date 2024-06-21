@@ -37,7 +37,7 @@ export const updateUsernameSchema = {
   }
 }
 
-const reservedUsernames = ['admin', 'bot']
+const reservedUsernames = ["admin", "bot", "tawkie"];
 
 const example: FastifyPluginAsync = async (fastify): Promise<void> => {
   fastify.put<{ Body: RequestBody }>('/updateUsername', { schema: updateUsernameSchema }, async function(request) {

@@ -6,7 +6,7 @@ export type ResponseType = {
 };
 
 export const queueStatusSchema = {
-  operationId: "getQueueStatus",
+  operationId: "getQueueSize",
   response: {
     200: {
       type: "object",

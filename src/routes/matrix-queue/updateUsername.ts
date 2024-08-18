@@ -60,6 +60,11 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
       fastify.log.warn(`Illegal : User ${userId} tried to update its username while not in the queue. State: ${user.userState}`)
       throw fastify.httpErrors.badRequest('User is not in the queue')
     }
+      if (usernameIsNumeric(username)) {
+        throw fastify.httpErrors.badRequest(
+          "Username must contain at least one letter",
+        );
+      }
 
     const existsOnMatrix = await userExists(username)
     if (existsOnMatrix) {
@@ -106,5 +111,8 @@ function usernameIsReserved(username: string): boolean {
 
 
 
+function usernameIsNumeric(username: string): boolean {
+  return /^\d+$/.test(username);
+}
 
 export default example;

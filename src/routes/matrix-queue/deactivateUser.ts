@@ -21,7 +21,11 @@ export const deactivateUserSchema = {
     200: {
       type: "object",
       properties: {
-        success: { type: "boolean" },
+        userId: { $ref: "https://tawkie.fr/common/uuid" },
+        username: { $ref: "https://tawkie.fr/common/matrixUsername" },
+        userState: { $ref: "https://tawkie.fr/common/userQueueState" },
+        queuePosition: { type: "integer" },
+        serverName: { type: "string" },
       },
     },
     400: { $ref: "https://tawkie.fr/common/HttpError" },

@@ -90,6 +90,35 @@ export async function getUserFromQueue(fastify: FastifyInstance, userId: string)
       userId: userId,
       serverName: rows[0].matrix_instance,
     }
+
+export async function getUserByUsername(
+  fastify: FastifyInstance,
+  username: string,
+): Promise<UserQueue> {
+  const query = `SELECT username, user_uuid, queue_position, user_state, matrix_instance FROM user_queue WHERE username = $1;`;
+  const { rows } = await fastify.pg.query<UserQueueDatabaseModel>(query, [
+    username,
+  ]);
+
+  if (rows.length !== 1) {
+    fastify.log.error(
+      `getUserByUsername: found 0 or multiple queue entries for username ${username}`,
+    );
+    return {
+      username: "",
+      queuePosition: -1,
+      userState: UserQueueStateStrings[UserQueueState.NONE],
+      userId: "",
+      serverName: "",
+    };
+  } else
+    return {
+      username: rows[0].username,
+      queuePosition: rows[0].queue_position,
+      userState: UserQueueStateStrings[rows[0].user_state as UserQueueState],
+      userId: rows[0].user_uuid,
+      serverName: rows[0].matrix_instance,
+    };
 }
 
 export default queueStatus;

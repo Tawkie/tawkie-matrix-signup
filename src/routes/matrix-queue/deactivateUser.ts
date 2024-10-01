@@ -1,20 +1,20 @@
 import { FastifyPluginAsync } from "fastify";
 import { FastifyInstance } from "fastify";
-import { ensureInQueue } from "./queueStatus.js";
+import { getUserByUsername } from "./queueStatus.js";
 import { UserQueueState } from "../../plugins/postgres.js";
 import { notifyWebhook } from "../../utils/hookshot.js";
 
 type RequestQuery = {
-  userId: string;
+  username: string;
 };
 
 export const deactivateUserSchema = {
   operationId: "deactivateUser",
   query: {
     type: "object",
-    required: ["userId"],
+    required: ["username"],
     properties: {
-      userId: { $ref: "https://tawkie.fr/common/uuid" },
+      username: { $ref: "https://tawkie.fr/common/matrixUsername" },
     },
   },
   response: {
@@ -34,13 +34,17 @@ const example: FastifyPluginAsync = async (fastify): Promise<void> => {
     "/deactivateUser",
     { schema: deactivateUserSchema },
     async function (request) {
-      const userId = request.query.userId;
+      const username = request.query.username;
 
-      await ensureInQueue(fastify, userId);
+      const user = await getUserByUsername(fastify, username);
 
-      await deactivateUser(fastify, userId);
-      notifyWebhook(`🚡 User ${userId} deactivated`);
-      return { success: true };
+      if (!user || !user.userId) {
+        throw fastify.httpErrors.badRequest("User not found");
+      }
+
+      await deactivateUser(fastify, user.userId);
+      notifyWebhook(`🚡 User ${user.userId} (${user.username}) deactivated`);
+      return user;
     },
   );
 };

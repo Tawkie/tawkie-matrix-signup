@@ -90,6 +90,7 @@ export async function getUserFromQueue(fastify: FastifyInstance, userId: string)
       userId: userId,
       serverName: rows[0].matrix_instance,
     }
+}
 
 export async function getUserByUsername(
   fastify: FastifyInstance,
